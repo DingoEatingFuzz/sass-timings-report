@@ -24,6 +24,17 @@ class Node {
     return this.value.stats.time;
   }
 
+  // In the event that the timings object doesn't include total (old ember)
+  // compute the total by adding the self timing of all children nodes
+  get derivedTotal() {
+    if (this.timings.total) return this.timings.total;
+
+    return (
+      this.timings.self +
+      this.children.reduce((sum, child) => sum + child.derivedTotal, 0)
+    );
+  }
+
   asFlameGraph() {
     // {
     //   name: "",
@@ -31,8 +42,8 @@ class Node {
     //   children?: []
     // }
     const datum = {
-      name: `${this.label} (${(this.timings.total / 1000000).toFixed(3)})`,
-      value: this.timings.total / 1000000
+      name: `${this.label} (${(this.derivedTotal / 1000000).toFixed(3)})`,
+      value: this.derivedTotal / 1000000
     };
     if (this.children.length) {
       datum.children = this.children.map(child => child.asFlameGraph());
@@ -45,11 +56,11 @@ export default class Tree {
   constructor(data) {
     const lookup = {};
     data.nodes.forEach(node => {
-      nodeLookup[node.id] = new Node(node, lookup);
+      lookup[node.id] = new Node(node, lookup);
     });
 
     // Root node is the node with the lowest ID
-    this.root = nodeLookup[data.nodes.sort((a, b) => a.id - b.id)[0].id];
+    this.root = lookup[data.nodes.sort((a, b) => a.id - b.id)[0].id];
 
     // Link all nodes to their parents
     this.root.decorateChildren();
@@ -64,5 +75,9 @@ export default class Tree {
       queue.push(...node.children);
     }
     return null;
+  }
+
+  asFlameGraph() {
+    return this.root.asFlameGraph();
   }
 }

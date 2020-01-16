@@ -16,6 +16,8 @@
     "svelte": "^3.0.0"
   },
   "dependencies": {
+    "d3": "^5.15.0",
+    "d3-flame-graph": "^2.1.9",
     "sirv-cli": "^0.4.4"
   }
 }
