@@ -1,5 +1,6 @@
 <script>
   import { onMount } from "svelte";
+  import TimingTree from "./timing-tree";
   import data from "./data";
   import HeatMap from "./HeatMap.svelte";
 
@@ -11,6 +12,27 @@
     dataRequest = d;
   });
 
+  const group = records => {
+    const groups = {};
+    records.forEach(record => {
+      const [, product, compiler, build] = record.name.match(
+        /(.+)-([dl].+?)-(.+)-\d\.json$/
+      );
+      const groupName = `${product}-${compiler}-${build}`;
+      groups[groupName] = groups[groupName] || {
+        product,
+        compiler,
+        build,
+        trees: []
+      };
+      groups[groupName].trees.push(record.tree);
+    });
+    return Object.keys(groups).map(name => ({
+      name,
+      ...groups[name]
+    }));
+  };
+
   onMount(async () => {
     data.update(d => {
       d.isLoading = true;
@@ -21,13 +43,18 @@
       const res = await fetch(dataPath);
       const json = await res.json();
       data.update(d => {
-        d.data = json;
+        d.data = group(
+          json.map(timing => ({
+            name: timing.name,
+            tree: new TimingTree(timing.value)
+          }))
+        );
         d.isLoading = false;
         return d;
       });
     } catch (err) {
       data.update(d => {
-        d.error = error;
+        d.error = err;
         d.isLoading = false;
         return d;
       });
