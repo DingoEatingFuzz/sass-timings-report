@@ -4,13 +4,12 @@
   import FlameGraph from "./FlameGraph.svelte";
   import vegaEmbed from "vega-embed";
 
-  let vegaDiv;
-  let vegaDiv2;
-  let groups = [];
-  let chartDataSass = [];
-  let chartDataTotal = [];
+  export let fieldFn;
+  export let domain;
 
-  const countAll = gs => gs.reduce((sum, g) => sum + g.trees.length, 0);
+  let vegaDiv;
+  let chartData = [];
+
   const median = list => {
     if (!list || list.length === 0) return 0;
     if (list.length === 1) return list[0];
@@ -19,9 +18,6 @@
     if (list.length % 2 === 1) return list[Math.floor(list.length / 2)];
     return (list[list.length / 2] + list[list.length / 2 - 1]) / 2;
   };
-
-  const styleTimings = trees => trees.map(t => t.findStyleRoot().derivedTotal);
-  const totalTimings = trees => trees.map(t => t.root.derivedTotal);
 
   const buildMatch = to => from =>
     from.product === to.product && from.build === to.build;
@@ -53,9 +49,7 @@
   };
 
   const unsub = data.subscribe(d => {
-    groups = d.data;
-    chartDataSass = groups ? chart(groups, styleTimings) : [];
-    chartDataTotal = groups ? chart(groups, totalTimings) : [];
+    chartData = d.data ? chart(d.data, trees => trees.map(fieldFn)) : [];
   });
 
   const vegaFor = (data, domain) => ({
@@ -124,30 +118,10 @@
   });
 
   onMount(() => {
-    vegaDiv && vegaEmbed(vegaDiv, vegaFor(chartDataSass, 7));
-    vegaDiv2 && vegaEmbed(vegaDiv2, vegaFor(chartDataTotal, 2));
+    vegaDiv && vegaEmbed(vegaDiv, vegaFor(chartData, domain));
   });
 </script>
 
-{#if groups}
-  <h1>
-    There are {groups.length} groups, totally {countAll(groups)} records..
-  </h1>
+{#if chartData}
   <div bind:this={vegaDiv} />
-  <div bind:this={vegaDiv2} />
-  <!-- <FlameGraph timing={brokenRecords[0]} /> -->
-  <!-- <ol>
-    {#each groups as group}
-      <li>
-        <strong>
-          {group.product} ({group.compiler} compiler) {group.build}:
-        </strong>
-        <ol>
-          {#each group.trees as tree}
-            <li>{tree.findStyleRoot().find('SassCompiler').derivedTotal}</li>
-          {/each}
-        </ol>
-      </li>
-    {/each}
-  </ol> -->
 {/if}
