@@ -35,6 +35,28 @@ class Node {
     );
   }
 
+  // Breadth-first search by label
+  find(label) {
+    let queue = [this];
+    while (queue.length) {
+      let node = queue.shift();
+      if (node.label === label) return node;
+      queue.push(...node.children);
+    }
+    return null;
+  }
+
+  where(label) {
+    let matches = [];
+    let queue = [this.root];
+    while (queue.length) {
+      let node = queue.shift();
+      if (node.label === label) matches.push(node);
+      queue.push(...node.children);
+    }
+    return matches;
+  }
+
   asFlameGraph() {
     // {
     //   name: "",
@@ -66,15 +88,17 @@ export default class Tree {
     this.root.decorateChildren();
   }
 
-  // Breadth-first search by label
   find(label) {
-    let queue = [this.root];
-    while (queue.length) {
-      let node = queue.shift();
-      if (node.label === label) return node;
-      queue.push(...node.children);
-    }
-    return null;
+    return this.root.find(label);
+  }
+
+  findStyleRoot() {
+    // The label for this changed at some point
+    return this.root.find("Packaged Styles") || this.root.find("styles");
+  }
+
+  where(label) {
+    return this.root.where(label);
   }
 
   asFlameGraph() {
