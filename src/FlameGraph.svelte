@@ -4,8 +4,18 @@
   import flameGraph from "d3-flame-graph/dist/d3-flamegraph";
 
   export let timing;
+  export let name;
 
   let flameDiv;
+  let graph;
+
+  $: {
+    if (graph) {
+      d3.select(flameDiv)
+        .datum(timing.asFlameGraph())
+        .call(graph);
+    }
+  }
 
   onMount(async () => {
     if (!timing) {
@@ -13,19 +23,18 @@
       return;
     }
 
-    console.log(timing.tree.asFlameGraph());
-    const graph = flameGraph()
-      .width(1200)
+    graph = flameGraph()
+      .width(1000)
       .cellHeight(20)
       .transitionDuration(500)
       .transitionEase(d3.easeCubic)
-      .sort(true)
-      .title(timing.name);
+      .sort(true);
 
     d3.select(flameDiv)
-      .datum(timing.tree.asFlameGraph())
+      .datum(timing.asFlameGraph())
       .call(graph);
   });
 </script>
 
+<h3>{name}</h3>
 <div bind:this={flameDiv} />

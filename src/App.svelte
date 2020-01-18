@@ -4,13 +4,33 @@
   import data from "./data";
   import HeatMap from "./HeatMap.svelte";
   import DistributionViz from "./DistributionViz.svelte";
+  import FlameGraph from "./FlameGraph.svelte";
 
   export let dataPath;
 
   let dataRequest = {};
 
-  let selectedProduct = "nomad";
-  let selectedBuild = "build-warm-dev";
+  let selectedProduct;
+  let selectedBuild;
+
+  let deepProduct;
+  let deepBuild;
+  let deepCompiler;
+  let deepRun;
+  let deepTiming;
+
+  $: {
+    const deepTimings =
+      dataRequest &&
+      dataRequest.data &&
+      dataRequest.data.find(
+        group =>
+          group.product === deepProduct &&
+          group.build === deepBuild &&
+          group.compiler === deepCompiler
+      );
+    deepTiming = deepTimings && deepTimings.trees[deepRun];
+  }
 
   const unsub = data.subscribe(d => {
     dataRequest = d;
@@ -64,6 +84,25 @@
       });
     }
   });
+
+  function clearDrilldown() {
+    clearFromProduct();
+    deepProduct = null;
+  }
+
+  function clearFromProduct() {
+    clearFromBuild();
+    deepBuild = null;
+  }
+
+  function clearFromBuild() {
+    clearFromCompiler();
+    deepCompiler = null;
+  }
+
+  function clearFromCompiler() {
+    deepRun = null;
+  }
 </script>
 
 <style>
@@ -130,6 +169,31 @@
 
   .button-bar label input {
     padding-right: 5px;
+  }
+
+  .drilldown {
+    display: flex;
+    justify-content: center;
+  }
+
+  .drilldown select + select {
+    margin-left: 6px;
+  }
+
+  .drilldown select option:first-child {
+    color: #666;
+  }
+
+  .drilldown button {
+    margin-left: 12px;
+    border: none;
+    background: transparent;
+    color: #992222;
+    cursor: pointer;
+  }
+
+  .drilldown button:hover {
+    color: #c26565;
   }
 
   @media (min-width: 640px) {
@@ -342,6 +406,52 @@
       Choose a product, a build type, a compiler, and an individual timing to
       see the flame graph of the build.
     </p>
+    <div class="drilldown">
+      <select bind:value={deepProduct}>
+        <option value={null}>-- product --</option>
+        <option value="consul">Consul</option>
+        <option value="nomad">Nomad</option>
+        <option value="tf-cloud">TF Cloud</option>
+        <option value="tf-registry">TF Registry</option>
+        <option value="vault">Vault</option>
+      </select>
+      {#if deepProduct}
+        <select bind:value={deepBuild}>
+          <option value={null}>-- build type --</option>
+          <option value="build-cold-dev">Build Cold Dev</option>
+          <option value="build-cold-prod">Build Cold Prod</option>
+          <option value="build-warm-dev">Build Warm Dev</option>
+          <option value="build-warm-prod">Build Warm Prod</option>
+          <option value="serve-build">Serve Build</option>
+          <option value="serve-rebuild">Serve Rebuild</option>
+        </select>
+      {/if}
+      {#if deepBuild}
+        <select bind:value={deepCompiler}>
+          <option value={null}>-- compiler --</option>
+          <option value="dart">Dart Sass</option>
+          <option value="lib">Lib Sass</option>
+        </select>
+      {/if}
+      {#if deepCompiler}
+        <select bind:value={deepRun}>
+          <option value={null}>-- run number --</option>
+          <option value={0}>One</option>
+          <option value={1}>Two</option>
+          <option value={2}>Three</option>
+          <option value={3}>Four</option>
+          <option value={4}>Five</option>
+        </select>
+      {/if}
+      <button on:click={clearDrilldown}>Clear</button>
+    </div>
+    {#if deepTiming}
+      <figure>
+        <FlameGraph
+          timing={deepTiming}
+          name={`${deepProduct} > ${deepBuild} > ${deepCompiler} (${deepRun + 1} of 5)`} />
+      </figure>
+    {/if}
     <h2>Methodology</h2>
     <h2>Reproducible Science</h2>
   {/if}
