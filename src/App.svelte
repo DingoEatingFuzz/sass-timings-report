@@ -221,7 +221,7 @@
 
 <main>
   {#if dataRequest.isLoading}
-    <h1>Loading all the data...</h1>
+    <h1>Loading all the data (150MB)...</h1>
   {:else if dataRequest.error}
     <h1>Uh oh... {dataRequest.error}</h1>
   {:else}
