@@ -1,7 +1,6 @@
 <script>
   import { onMount } from "svelte";
   import data from "./data";
-  import FlameGraph from "./FlameGraph.svelte";
   import vegaEmbed from "vega-embed";
 
   export let fieldFn;
@@ -54,7 +53,7 @@
 
   const vegaFor = (data, domain) => ({
     $schema: "https://vega.github.io/schema/vega-lite/v4.json",
-    description: "A simple bar chart with embedded data.",
+    description: "Heatmap of build timings across products and build types.",
     data: {
       values: data
     },

@@ -3,10 +3,14 @@
   import TimingTree from "./timing-tree";
   import data from "./data";
   import HeatMap from "./HeatMap.svelte";
+  import DistributionViz from "./DistributionViz.svelte";
 
   export let dataPath;
 
   let dataRequest = {};
+
+  let selectedProduct = "nomad";
+  let selectedBuild = "build-warm-dev";
 
   const unsub = data.subscribe(d => {
     dataRequest = d;
@@ -104,6 +108,28 @@
 
   figure {
     text-align: center;
+  }
+
+  .button-bar {
+    margin: auto;
+    margin-bottom: 0.5em;
+    display: flex;
+    justify-content: center;
+  }
+
+  .button-bar label {
+    padding: 10px;
+    background: #eee;
+    border: 1px solid #bbb;
+    border-radius: 3px;
+  }
+
+  .button-bar label + label {
+    margin-left: 6px;
+  }
+
+  .button-bar label input {
+    padding-right: 5px;
   }
 
   @media (min-width: 640px) {
@@ -207,5 +233,116 @@
     <figure>
       <HeatMap fieldFn={t => t.root.derivedTotal} domain={2} />
     </figure>
+    <h2>Dive Deeper</h2>
+    <p>
+      Choose a product and a build type to see the distribution of all runs
+      captured in the aggregate median metrics.
+    </p>
+    <div class="button-bar">
+      <label>
+        <input
+          type="radio"
+          bind:group={selectedProduct}
+          name="product"
+          value="consul" />
+        Consul
+      </label>
+      <label>
+        <input
+          type="radio"
+          bind:group={selectedProduct}
+          name="product"
+          value="nomad" />
+        Nomad
+      </label>
+      <label>
+        <input
+          type="radio"
+          bind:group={selectedProduct}
+          name="product"
+          value="tf-cloud" />
+        TF Cloud
+      </label>
+      <label>
+        <input
+          type="radio"
+          bind:group={selectedProduct}
+          name="product"
+          value="tf-registry" />
+        TF Registry
+      </label>
+      <label>
+        <input
+          type="radio"
+          bind:group={selectedProduct}
+          name="product"
+          value="vault" />
+        Vault
+      </label>
+    </div>
+    {#if selectedProduct}
+      <div class="button-bar">
+        <label>
+          <input
+            type="radio"
+            bind:group={selectedBuild}
+            name="build"
+            value="build-cold-dev" />
+          Build Cold Dev
+        </label>
+        <label>
+          <input
+            type="radio"
+            bind:group={selectedBuild}
+            name="build"
+            value="build-cold-prod" />
+          Build Cold Prod
+        </label>
+        <label>
+          <input
+            type="radio"
+            bind:group={selectedBuild}
+            name="build"
+            value="build-warm-dev" />
+          Build Warm Dev
+        </label>
+        <label>
+          <input
+            type="radio"
+            bind:group={selectedBuild}
+            name="build"
+            value="build-warm-prod" />
+          Build Warm Prod
+        </label>
+        <label>
+          <input
+            type="radio"
+            bind:group={selectedBuild}
+            name="build"
+            value="serve-build" />
+          Serve Build
+        </label>
+        <label>
+          <input
+            type="radio"
+            bind:group={selectedBuild}
+            name="build"
+            value="serve-rebuild" />
+          Serve Rebuild
+        </label>
+      </div>
+    {/if}
+    {#if selectedProduct && selectedBuild}
+      <figure>
+        <DistributionViz product={selectedProduct} build={selectedBuild} />
+      </figure>
+    {/if}
+    <h2>Dive Even Deeper</h2>
+    <p>
+      Choose a product, a build type, a compiler, and an individual timing to
+      see the flame graph of the build.
+    </p>
+    <h2>Methodology</h2>
+    <h2>Reproducible Science</h2>
   {/if}
 </main>
