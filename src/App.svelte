@@ -484,6 +484,51 @@
       time difference is 1.7s to 4.5s in the worst case.
     </p>
     <h2>Appendix 1. Methodology</h2>
+    <p>
+      All timing data was collected using Ember CLI's internal timing mechanism
+      exposed through the
+      <code>BROCCOLI_VIZ=1</code>
+      environment variable.
+    </p>
+
+    <p>
+      Each timing target (product + build type + compiler) is measured five
+      times to account for environmental variability. The median value is used
+      to aggregate analysis to best account for outliers.
+    </p>
+
+    <p>
+      To further account for environmental variability, all data was collected
+      on the same day on a mostly idle Macbook Pro (2016 3.3GHz, 16 GB 2133 MHz,
+      SSD storage).
+    </p>
     <h2>Appendix 2. Reproducible Science</h2>
+    <p>
+      All science should be reproducible, this analysis is no exception. This
+      analysis is the product of two open source projects.
+      <a
+        href="https://github.com/DingoEatingFuzz/ember-metrics"
+        target="_blank"
+        rel="noopener noreferrer">
+        Ember Timings
+      </a>
+      , a script used to collect all six build measurements N times for an Ember
+      project. And
+      <a
+        href="https://github.com/DingoEatingFuzz/sass-timings-report"
+        target="_blank"
+        rel="noopener noreferrer">
+        Sass Timings Report
+      </a>
+      , the report you are looking at, which includes all data transformations
+      from the original Heimdall exports to Vega Lite charts.
+    </p>
+
+    <p>
+      Consul, Nomad, and Vault are all open source projects, so for these three
+      products, all analysis can be reproduced by anyone. Terraform Cloud and
+      Terraform Registry are closed source but analysis will still be
+      reproducible for authorized HashiCorp contributors.
+    </p>
   {/if}
 </main>
