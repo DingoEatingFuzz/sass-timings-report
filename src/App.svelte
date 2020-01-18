@@ -10,13 +10,13 @@
 
   let dataRequest = {};
 
-  let selectedProduct;
-  let selectedBuild;
+  let selectedProduct = "tf-registry";
+  let selectedBuild = "serve-rebuild";
 
-  let deepProduct;
-  let deepBuild;
-  let deepCompiler;
-  let deepRun;
+  let deepProduct = "consul";
+  let deepBuild = "build-warm-dev";
+  let deepCompiler = "dart";
+  let deepRun = 0;
   let deepTiming;
 
   $: {
@@ -112,11 +112,30 @@
     margin: 0 auto;
   }
 
+  h1,
+  h2 {
+    font-family: serif;
+    letter-spacing: -0.08ch;
+  }
+
   h1 {
-    color: #ff3e00;
-    font-size: 2em;
-    font-weight: 100;
+    color: #556;
+    font-size: 3em;
+    font-weight: 800;
     text-align: center;
+  }
+
+  h1 .lib {
+    color: #438abd;
+  }
+
+  h1 .dart {
+    color: #d47b1c;
+  }
+
+  h2 {
+    font-size: 2em;
+    margin-top: 2em;
   }
 
   h2,
@@ -125,7 +144,8 @@
     width: 90%;
     max-width: 650px;
     text-align: left;
-    margin: auto;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   li {
@@ -139,10 +159,6 @@
 
   p {
     margin: 1.5em auto;
-  }
-
-  h2 {
-    margin-top: 2em;
   }
 
   figure {
@@ -209,7 +225,12 @@
   {:else if dataRequest.error}
     <h1>Uh oh... {dataRequest.error}</h1>
   {:else}
-    <h1>Dart Sass v. Lib Sass</h1>
+    <h1>
+      <span class="dart">Dart</span>
+      Sass v.
+      <span class="lib">Lib</span>
+      Sass
+    </h1>
     <p>
       It's commonly understood and documented that Lib Sass is faster than Dart
       Sass, but by how much? Given the total amount of time Ember spends
@@ -452,7 +473,17 @@
           name={`${deepProduct} > ${deepBuild} > ${deepCompiler} (${deepRun + 1} of 5)`} />
       </figure>
     {/if}
-    <h2>Methodology</h2>
-    <h2>Reproducible Science</h2>
+    <h2>Conclusion</h2>
+    <p>
+      Although Lib Sass is in fact considerably faster than Dart Sass, the gains
+      are dilluted by other work happening in every build scenario.
+    </p>
+    <p>
+      The only realistic scenario in which Lib Sass is notably faster than Dart
+      Sass (from a developer experience standpoint) is rebuilds. Even here, the
+      time difference is 1.7s to 4.5s in the worst case.
+    </p>
+    <h2>Appendix 1. Methodology</h2>
+    <h2>Appendix 2. Reproducible Science</h2>
   {/if}
 </main>
