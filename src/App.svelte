@@ -195,6 +195,7 @@
     display: flex;
     justify-content: center;
     width: 100%;
+    flex-wrap: wrap;
   }
 
   .drilldown select + select {
