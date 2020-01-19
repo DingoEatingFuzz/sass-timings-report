@@ -19,7 +19,7 @@ export default {
   plugins: [
     replace({
       __DATA_PATH__: production
-        ? "https://storage.googleapis.com/mlange-files/all-data.json"
+        ? "https://storage.googleapis.com/mlange-files/all-data.json.gz"
         : "/all-data.json"
     }),
 
