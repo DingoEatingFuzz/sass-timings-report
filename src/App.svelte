@@ -108,7 +108,7 @@
 <style>
   main {
     padding: 1em;
-    max-width: 240px;
+    /* max-width: 240px; */
     margin: 0 auto;
   }
 
@@ -120,7 +120,7 @@
 
   h1 {
     color: #556;
-    font-size: 3em;
+    font-size: 2.8em;
     font-weight: 800;
     text-align: center;
   }
@@ -163,6 +163,9 @@
 
   figure {
     text-align: center;
+    max-width: 100%;
+    overflow-x: auto;
+    margin: 1em 0;
   }
 
   .button-bar {
@@ -170,6 +173,7 @@
     margin-bottom: 0.5em;
     display: flex;
     justify-content: center;
+    width: 100%;
   }
 
   .button-bar label {
@@ -190,6 +194,7 @@
   .drilldown {
     display: flex;
     justify-content: center;
+    width: 100%;
   }
 
   .drilldown select + select {
